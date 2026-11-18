@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Zaaer · Dialect &amp; Cultural Localization Engine</title>
+<meta name="theme-color" content="#0f766e">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={darkMode:'class'}</script>
+<style type="text/tailwindcss">
+@layer components{
+.sel{@apply w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-2 text-sm}
+.card{@apply rounded-2xl p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700}
+.lb{@apply text-xs font-semibold opacity-70 block mb-1}
+.chip{@apply px-3 py-1.5 rounded-full text-sm font-semibold}}
+</style>
+<style>
+body{font-family:Cairo,system-ui,sans-serif}
+.wave span{display:inline-block;width:3px;margin:0 1px;background:currentColor;border-radius:2px;animation:w .8s infinite ease-in-out}
+.wave span:nth-child(2n){animation-delay:.2s}.wave span:nth-child(3n){animation-delay:.4s}
+@keyframes w{0%,100%{height:4px}50%{height:18px}}
+@media(prefers-reduced-motion:reduce){.wave span{animation:none;height:10px}}
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 min-h-screen pb-24">
+<header class="sticky top-0 z-20 bg-teal-700 text-white shadow">
+ <div class="max-w-3xl mx-auto px-4 py-3 flex items-center gap-2">
+  <div class="flex-1 min-w-0"><h1 class="font-extrabold text-lg leading-tight">Zaaer · زائر</h1><p class="text-xs opacity-80 truncate" data-i18n="sub"></p></div>
+  <button id="lg" class="chip bg-white/20">العربية</button>
+  <button id="th" class="chip bg-white/20" aria-label="Theme">🌓</button>
+  <button id="up" class="chip bg-amber-400 text-slate-900 font-bold">⭐ <span id="upt"></span></button>
+ </div>
+</header>
+
+<main class="max-w-3xl mx-auto p-4 space-y-4">
+ <nav class="flex gap-2">
+  <button data-tab="pt" class="chip" data-i18n="tr"></button>
+  <button data-tab="pd" class="chip" data-i18n="di"></button>
+ </nav>
+
+ <section id="pt" class="space-y-4">
+  <div class="grid grid-cols-[1fr_auto_1fr] gap-2 items-start">
+   <div><label class="lb" data-i18n="from"></label><select id="sc" class="sel"></select><select id="ss" class="sel mt-1"></select></div>
+   <button id="sw" class="chip bg-slate-200 dark:bg-slate-700 mt-5" aria-label="Swap">⇄</button>
+   <div><label class="lb" data-i18n="to"></label><select id="tc" class="sel"></select><select id="ts" class="sel mt-1"></select></div>
+  </div>
+
+  <div>
+   <label class="lb" data-i18n="tone"></label>
+   <div class="flex flex-wrap gap-2">
+    <button data-tone="street" class="chip" data-i18n="t_street"></button>
+    <button data-tone="biz" class="chip" data-i18n="t_biz"></button>
+    <button data-tone="slang" class="chip" data-i18n="t_slang"></button>
+    <button data-tone="formal" class="chip" data-i18n="t_formal"></button>
+   </div>
+  </div>
+
+  <div class="relative">
+   <textarea id="inp" dir="auto" rows="3" data-ph="ph" class="sel !text-lg !p-3 pe-14"></textarea>
+   <button id="mic" class="absolute end-2 bottom-3 w-10 h-10 rounded-full bg-teal-600 text-white text-xl" aria-label="Voice">🎤</button>
+  </div>
+  <div id="smp" class="flex flex-wrap gap-2"></div>
+
+  <div class="flex items-center gap-3">
+   <button id="go" class="chip !px-6 !py-2.5 bg-teal-600 text-white text-base" data-i18n="go"></button>
+   <span id="cn" class="text-xs opacity-70"></span>
+  </div>
+  <div id="out" class="space-y-3"></div>
+ </section>
+
+ <section id="pd" class="space-y-3" hidden>
+  <input id="q" data-ph="srch" class="sel !p-3" type="search">
+  <div id="dl" class="space-y-3"></div>
+ </section>
+</main>
+
+<div id="wv" class="hidden fixed bottom-4 inset-x-0 mx-auto w-fit bg-teal-700 text-white px-4 py-2 rounded-full items-center gap-2 z-30">
+ <span class="wave"><span></span><span></span><span></span><span></span><span></span></span><span id="wt" class="text-sm"></span>
+</div>
+
+<div id="md" class="hidden fixed inset-0 z-40 bg-black/60 items-end sm:items-center justify-center p-0 sm:p-4">
+ <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-3 max-h-[92vh] overflow-y-auto">
+  <h2 class="text-xl font-extrabold" data-i18n="ut"></h2>
+  <p class="text-sm opacity-70" data-i18n="us"></p>
+  <div id="pl" class="flex gap-2"></div>
+  <label class="lb" data-i18n="pay"></label>
+  <div id="pm" class="flex flex-wrap gap-2"></div>
+  <div id="pi" class="rounded-xl bg-slate-100 dark:bg-slate-900 p-3 text-sm space-y-2"></div>
+  <div class="flex gap-2">
+   <input id="cd" dir="ltr" class="sel !p-3 uppercase" data-ph="code">
+   <button id="rd" class="chip bg-teal-600 text-white" data-i18n="red"></button>
+  </div>
+  <p id="ms" class="text-sm min-h-5"></p>
+  <button id="cl" class="w-full chip bg-slate-200 dark:bg-slate-700" data-i18n="cl"></button>
+ </div>
+</div>
+
+<script>
+/* ################ PASTE YOUR PAYMENT DETAILS BELOW ################
+   wa       -> your WhatsApp link: https://wa.me/<country code + number, digits only>
+   plans    -> prices: egp = InstaPay + Vodafone Cash, sdg = Bankak, usdt = Binance
+   pay.*.a  -> the account / number / wallet customers will see
+   codes    -> activation codes and how many days each unlocks
+   The AI API key does NOT go in this file. It goes in Vercel Environment Variables. */
+const CFG={free:5,wa:'https://wa.me/20XXXXXXXXXX',
+ plans:[{n:['Day Pass','باس يومي'],egp:15,usdt:0.5,sdg:5000,days:1},{n:['Week','أسبوع'],egp:59,usdt:1.5,sdg:18000,days:7},{n:['Month','شهر'],egp:149,usdt:4,sdg:45000,days:30}],
+ pay:{instapay:{n:'InstaPay',a:'yourname@instapay'},vodafone:{n:'Vodafone Cash',a:'01XXXXXXXXX'},bankak:{n:'Bankak · بنكك',a:'YOUR_BANKAK_ACCOUNT_NUMBER'},binance:{n:'Binance USDT (TRC20)',a:'YOUR_WALLET_ADDRESS'}},
+ codes:{'ZAAER-DAY':1,'ZAAER-WEEK':7,'ZAAER-MONTH':30}};
+
+/* ===== DATA ===== */
+const REG={
+en:{n:['English','الإنجليزية']},
+msa:{n:['Modern Standard Arabic','الفصحى']},
+eg:{n:['Egypt','مصر'],s:[['Cairo','القاهرة'],['Saidi (Upper Egypt)','الصعيد'],['Alexandria','الإسكندرية'],['Delta','الدلتا']]},
+sd:{n:['Sudan','السودان'],s:[['Khartoum','الخرطوم'],['Darfur','دارفور'],['Kordofan','كردفان'],['Eastern Sudan','شرق السودان']]},
+sa:{n:['Saudi Arabia','السعودية'],s:[['Najd (Riyadh)','نجد (الرياض)'],['Hijaz (Jeddah)','الحجاز (جدة)'],['Eastern Province','الشرقية'],['South (Asir)','الجنوب (عسير)']]},
+ae:{n:['UAE','الإمارات'],s:[['Dubai','دبي'],['Abu Dhabi','أبوظبي'],['Sharjah & North','الشارقة والشمال']]},
+lv:{n:['Levant','بلاد الشام'],s:[['Syria','سوريا'],['Lebanon','لبنان'],['Palestine','فلسطين'],['Jordan','الأردن']]},
+ma:{n:['North Africa','المغرب العربي'],s:[['Morocco','المغرب'],['Algeria','الجزائر'],['Tunisia','تونس'],['Libya','ليبيا']]}};
+
+const P=[
+{en:'How much is this?',msa:'كم سعر هذا؟',eg:'بكام ده؟',sd:'دا بكم؟',sa:'بكم هذا؟',ae:'شكثر هذا؟',lv:'قديش هاد؟',ma:'بشحال هادا؟',
+ f:{en:'Excuse me, could you tell me the price of this, please?',ar:'من فضلك، هل لك أن تخبرني بسعر هذا؟'},
+ card:{en:'Prices in souks and small shops are often negotiable. Asking first, then countering lower, is a normal ritual, not an insult.',ar:'الأسعار في الأسواق والمحلات الصغيرة غالباً قابلة للتفاوض. السؤال أولاً ثم عرض سعر أقل طقس عادي وليس إهانة.'}},
+{en:'What do you want?',msa:'ماذا تريد؟',eg:'عايز إيه؟',sd:'داير شنو؟',sa:'وش تبي؟',ae:'شو تبي؟',lv:'شو بدك؟',ma:'شنو بغيتي؟',
+ f:{en:'How may I help you?',ar:'كيف يمكنني مساعدتك؟'},
+ trap:{r:[],en:'A blunt "what do you want?" can sound abrupt or hostile, especially to elders, officials or customers. Soften it.',ar:'سؤال «ماذا تريد؟» المباشر قد يبدو فظاً أو عدائياً خاصة مع الكبار والموظفين والعملاء. خفّفه.'},
+ card:{en:'"Daayir" (Sudan), "Eayez" (Egypt), "Bidak" (Levant) and "Tibi" (Gulf) are all local forms of "want".',ar:'«داير» (السودان) و«عايز» (مصر) و«بدك» (الشام) و«تبي» (الخليج) كلها صيغ محلية لـ«تريد».'}},
+{en:'How are you?',msa:'كيف حالك؟',eg:'عامل إيه؟',sd:'كيفنك؟',sa:'وشلونك؟',ae:'شخبارك؟',lv:'كيفك؟',ma:'لاباس؟',
+ f:{en:'How do you do? I hope you are well.',ar:'كيف حالكم؟ أرجو أن تكونوا بخير.'},
+ trap:{r:['sa','ae'],en:'Avoid asking a man directly about his wife or female relatives. Ask about "the family" (الأهل) instead.',ar:'تجنّب السؤال المباشر عن زوجة الرجل أو نساء أسرته؛ اسأل عن «الأهل» بدلاً من ذلك.'},
+ card:{en:'Greetings are a ritual: expect several rounds of "how are you / how is the family / thank God" before any business.',ar:'التحية طقس اجتماعي: توقّع عدة جولات من السؤال عن الحال والأهل والحمد لله قبل الدخول في الموضوع.'}},
+{en:"I don't know.",msa:'لا أعرف.',eg:'معرفش.',sd:'ما عارف.',sa:'ما أدري.',ae:'مادري.',lv:'ما بعرف.',ma:'ما عرفتش.',
+ f:{en:"I'm afraid I don't have that information.",ar:'للأسف ليست لديّ هذه المعلومة.'},
+ card:{en:'Gulf speakers favour "adri" (to be aware), while Egyptians and Levantines use forms of "3araf" (to know).',ar:'يفضّل الخليجيون «أدري» بينما يستخدم المصريون والشوام صيغاً من «عرف».'}},
+{en:'I love you.',msa:'أحبك.',eg:'بحبك.',sd:'بحبك.',sa:'أحبك.',ae:'أحبك.',lv:'بحبك.',ma:'نبغيك.',
+ f:{en:'You are very dear to me.',ar:'أنت عزيز على قلبي.'},
+ trap:{r:['sa','ae','ma'],en:'In the Gulf, "أبغاك" means "I want/need you", not love, while "نبغيك" in the Maghreb can mean love. Mixing them up changes the meaning.',ar:'في الخليج «أبغاك» تعني «أريدك/أحتاجك» وليست حباً، بينما «نبغيك» في المغرب العربي قد تعني الحب؛ الخلط بينهما يغيّر المعنى.'},
+ card:{en:'Romantic declarations in public can be sensitive in conservative settings. Keep them private.',ar:'التصريح العاطفي علناً قد يكون حساساً في الأوساط المحافظة؛ الأفضل أن يبقى خاصاً.'}},
+{en:'Where is the bathroom?',msa:'أين دورة المياه؟',eg:'الحمام فين؟',sd:'الحمام وين؟',sa:'وين دورة المياه؟',ae:'وين الحمام؟',lv:'وين الحمام؟',ma:'فين كاين بيت الما؟',
+ f:{en:'Excuse me, could you direct me to the restroom?',ar:'عفواً، هل يمكنك إرشادي إلى دورة المياه؟'},
+ card:{en:'"دورة المياه" is the standard polite term in Saudi Arabia; Moroccans say "bit lma" (house of water).',ar:'«دورة المياه» هي التعبير المهذّب المعتاد في السعودية، ويقول المغاربة «بيت الما».'}},
+{en:'Go straight ahead.',msa:'اذهب مباشرة.',eg:'امشي على طول.',sd:'امشي طوالي.',sa:'امش سيدا.',ae:'امش على طول.',lv:'روح دغري.',ma:'سير نيشان.',
+ f:{en:'Please proceed straight ahead.',ar:'تفضّل بالسير إلى الأمام مباشرة.'},
+ card:{en:'In Sudan "طوالي" also means "right away"; in the Levant "دغري" can mean "frankly".',ar:'في السودان «طوالي» تعني أيضاً «فوراً»، وفي الشام «دغري» قد تعني «بصراحة».'}}];
+
+const D=[
+{w:'زول',r:'sd',en:'Person / guy: the everyday Sudanese word for "someone".',ar:'شخص / رجل: الكلمة السودانية اليومية لـ«شخص».',x:'الزول داك كويس. — That guy is nice.'},
+{w:'طوالي',r:'sd',en:'Straight ahead, or "right away".',ar:'على طول، أو «فوراً».',x:'امشي طوالي. — Go straight.'},
+{w:'معلش',r:'eg',en:"Sorry / never mind / it's okay. Also common in the Levant and Gulf.",ar:'آسف / ولا يهمك. شائعة أيضاً في الشام والخليج.',x:"معلش اتأخرت. — Sorry I'm late."},
+{w:'يا باشا',r:'eg',en:'Friendly "boss": a warm address to almost anyone, not a literal rank.',ar:'«يا زعيم» ودّية: تُقال لأي شخص تقريباً وليست رتبة حقيقية.',x:'تحت أمرك يا باشا. — At your service, boss.'},
+{w:'دغري',r:'lv',en:'Straight ahead, or directly / frankly.',ar:'مباشرة / على طول.',x:'روح دغري. — Go straight.'},
+{w:'هلأ',r:'lv',en:'Now (Levantine).',ar:'الآن (شامية).',x:'تعال هلأ. — Come now.'},
+{w:'وايد',r:'ae',en:'Very / a lot (Gulf).',ar:'كثير جداً (خليجية).',x:'الأكل وايد حلو. — The food is very good.'},
+{w:'بزاف',r:'ma',en:'A lot / many (Maghrebi; "برشا" in Tunisia).',ar:'كثير (مغاربية، و«برشا» في تونس).',x:'شكرا بزاف. — Thanks a lot.'}];
+
+const T={
+en:{sub:'Dialect & Cultural Localization Engine',tr:'Translate',di:'Dictionary',from:'From',to:'To',tone:'Context & tone',t_street:'Street / Daily Life',t_biz:'Business & Negotiation',t_slang:'Slang & Humor',t_formal:'Formal / Polite',ph:'Type a phrase, e.g. How much is this?',go:'Translate',left:'free translations left today',nat:'🗣️ Natural (street-level)',pol:'🎩 Polite / conservative',trap:'🚩 Cultural Trap & Red Flag',ctx:'💡 Context Card',try:'Try:',srch:'Search slang, words or regions',none:'No match in the demo phrasebook yet. Try one of the sample phrases.',up:'Upgrade',pro:'PRO',ut:'Unlock Zaaer Pro',us:'Unlimited translations, the full dictionary and offline packs.',lis:'Listening…',wait:'Translating…',nosr:'Voice input is not supported in this browser. Use Chrome, Edge or Safari.',mice:'Microphone blocked or no speech heard. Allow mic access and try again.',say:'Playing…',code:'Activation code',red:'Redeem',ok:'✅ Activated. Pro is on.',bad:'❌ Invalid or expired code.',pay:'Pay with',how:'Send this amount, then message us the receipt to get your code:',wa:'Send receipt on WhatsApp',cl:'Close',
+ tip_street:'Use with friends, drivers and shopkeepers.',tip_biz:'Open with pleasantries and avoid a flat "no".',tip_slang:'Friends only; humor changes from country to country.',tip_formal:'Safe with elders, officials and strangers.'},
+ar:{sub:'محرك اللهجات والتوطين الثقافي',tr:'ترجمة',di:'القاموس',from:'من',to:'إلى',tone:'السياق والنبرة',t_street:'الشارع / الحياة اليومية',t_biz:'أعمال وتفاوض',t_slang:'عامية وفكاهة',t_formal:'رسمي / مهذّب',ph:'اكتب عبارة، مثال: بكام ده؟',go:'ترجم',left:'ترجمات مجانية متبقية اليوم',nat:'🗣️ طبيعي (لغة الشارع)',pol:'🎩 مهذّب / محافظ',trap:'🚩 فخ ثقافي وتنبيه',ctx:'💡 بطاقة السياق',try:'جرّب:',srch:'ابحث عن كلمة أو لهجة',none:'لا توجد نتيجة في القاموس التجريبي. جرّب إحدى العبارات المقترحة.',up:'ترقية',pro:'برو',ut:'افتح زائر برو',us:'ترجمات غير محدودة وقاموس كامل وحزم بدون إنترنت.',lis:'جارٍ الاستماع…',wait:'جارٍ الترجمة…',nosr:'الإدخال الصوتي غير مدعوم في هذا المتصفح. استخدم Chrome أو Edge أو Safari.',mice:'الميكروفون محظور أو لم يُسمع كلام. اسمح بالوصول للميكروفون وأعد المحاولة.',say:'جارٍ التشغيل…',code:'كود التفعيل',red:'تفعيل',ok:'✅ تم التفعيل. أنت الآن برو.',bad:'❌ الكود غير صالح أو منتهٍ.',pay:'ادفع عبر',how:'حوّل هذا المبلغ ثم أرسل لنا الإيصال لتحصل على الكود:',wa:'أرسل الإيصال عبر واتساب',cl:'إغلاق',
+ tip_street:'مناسب مع الأصدقاء والسائقين وأصحاب المحلات.',tip_biz:'ابدأ بالمجاملات وتجنّب الرفض المباشر.',tip_slang:'للأصدقاء فقط؛ الفكاهة تختلف من بلد لآخر.',tip_formal:'آمن مع الكبار والمسؤولين والغرباء.'}};
+
+/* ===== HELPERS ===== */
+const $=id=>document.getElementById(id),G=k=>{try{return localStorage.getItem(k)}catch(e){return null}},S=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const norm=s=>s.toLowerCase().replace(/[\u064B-\u065F]/g,'').replace(/[إأآ]/g,'ا').replace(/[؟?.!,،]/g,'').replace(/\s+/g,' ').trim();
+const on=(e,f)=>{['bg-teal-600','text-white'].forEach(c=>e.classList.toggle(c,f));['bg-slate-200','dark:bg-slate-700'].forEach(c=>e.classList.toggle(c,!f))};
+const pv=(p,k)=>k==='en'?p.en:(p[k]||p.msa),KEYS=['en','msa','eg','sd','sa','ae','lv','ma'];
+let L=G('zl')||'en',tone='street',pay='instapay',plan=0,last=null;
+
+/* ===== USAGE & PRO ===== */
+const day=()=>new Date().toDateString(),prem=()=>+G('zp')>Date.now();
+const cnt=()=>{try{const o=JSON.parse(G('zu'));if(o&&o.d===day())return o.n}catch(e){}return 0};
+const can=()=>prem()||cnt()<CFG.free;
+function ref(){$('upt').textContent=prem()?T[L].pro:T[L].up;$('cn').textContent=prem()?'✨ PRO':Math.max(0,CFG.free-cnt())+' '+T[L].left}
+
+/* ===== SELECTORS ===== */
+function sub(c,s){const r=REG[$(c).value].s,v=$(s).value;$(s).style.display=r?'':'none';$(s).innerHTML=r?r.map((x,i)=>`<option value="${i}">${x[+(L==='ar')]}</option>`).join(''):'';if(r&&r[v])$(s).value=v}
+function fill(){[['sc','ss','en'],['tc','ts','eg']].forEach(([c,s,d])=>{const v=$(c).value||d;$(c).innerHTML=Object.keys(REG).map(k=>`<option value="${k}">${REG[k].n[+(L==='ar')]}</option>`).join('');$(c).value=v;sub(c,s)})}
+function smp(){const s=$('sc').value;$('smp').innerHTML=`<span class="text-xs opacity-70 self-center">${T[L].try}</span>`+P.slice(0,5).map(p=>`<button class="chip bg-slate-200 dark:bg-slate-700 !font-normal" data-v="${pv(p,s)}">${pv(p,s)}</button>`).join('')}
+
+/* ===== TRANSLATION: AI endpoint first, built-in phrasebook as offline fallback ===== */
+const E=s=>String(s||'').replace(/[&<>"'`]/g,c=>'&#'+c.charCodeAt(0)+';');
+const lbl=(c,s)=>{const g=REG[$(c).value];return [g.n[0],g.s?g.s[$(s).value][0]:'']};
+async function ai(b){const r=await fetch('/api/translate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});if(!r.ok)throw 0;return r.json()}
+function fromAI(a,tgt){if(!a||!a.street||!a.card)throw 0;const o={en:E(a.street),msa:E(a.street),f:{en:E(a.polite),ar:E(a.polite)},card:{en:E(a.card.en),ar:E(a.card.ar)},trap:a.trap?{r:[],en:E(a.trap.en),ar:E(a.trap.ar)}:null};o[tgt]=o.en;return o}
+const find=t=>{const n=norm(t);return n&&P.find(p=>KEYS.some(k=>{const m=norm(p[k]);return n===m||n.includes(m)}))};
+function show(){
+ const o=$('out');if(!last){o.innerHTML='';return}
+ const {p,tgt,src,ts}=last,t=T[L];
+ if(!p){o.innerHTML=`<div class="card text-sm">${t.none}</div>`;return}
+ const en=tgt==='en',st=en?p.en:pv(p,tgt),po=en?p.f.en:p.f.ar,fm=tone==='biz'||tone==='formal';
+ const [a,b]=fm?[po,st]:[st,po],[la,lb]=fm?[t.pol,t.nat]:[t.nat,t.pol],rtl=!en;
+ const box=(lab,tx,cls)=>`<div class="card ${cls}"><div class="flex justify-between items-center"><b class="text-sm">${lab}</b><button onclick="say(this.dataset.t,${rtl})" data-t="${tx}" class="text-xl" aria-label="Play">🔊</button></div><p dir="${rtl?'rtl':'ltr'}" class="text-2xl font-semibold mt-2">${tx}</p></div>`;
+ const tp=p.trap&&(!p.trap.r.length||p.trap.r.includes(tgt)||p.trap.r.includes(src))?p.trap:null;
+ const rg=REG[tgt],place=rg.n[+(L==='ar')]+(rg.s?' · '+rg.s[ts][+(L==='ar')]:'');
+ o.innerHTML=`<p class="text-xs opacity-70">📍 ${place}</p>`+box(la,a,'border-s-4 border-s-teal-500')+box(lb,b,'')+
+ (tp?`<div class="rounded-2xl p-4 bg-red-50 text-red-900 dark:bg-red-950 dark:text-red-100 border border-red-300 dark:border-red-800"><b>${t.trap}</b><p class="text-sm mt-1">${tp[L]}</p></div>`:'')+
+ `<div class="rounded-2xl p-4 bg-amber-50 text-amber-900 dark:bg-amber-950 dark:text-amber-100 border border-amber-300 dark:border-amber-800"><b>${t.ctx}</b><p class="text-sm mt-1">${p.card[L]}</p><p class="text-xs mt-2 opacity-70">${t['tip_'+tone]}</p></div>`}
+
+/* ===== VOICE (Web Speech API in, speechSynthesis out) ===== */
+function wv(f,txt){const e=$('wv');e.classList.toggle('hidden',!f);e.classList.toggle('flex',!!f);$('wt').textContent=txt||''}
+function say(t,r){wv(1,T[L].say);if(!window.speechSynthesis){setTimeout(()=>wv(0),1500);return}
+ speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang=r?'ar-SA':'en-US';u.onend=u.onerror=()=>wv(0);speechSynthesis.speak(u)}
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition,
+VL={en:'en-US',msa:'ar-SA',eg:'ar-EG',sd:'ar-SD',sa:'ar-SA',ae:'ar-AE',lv:['ar-SY','ar-LB','ar-PS','ar-JO'],ma:['ar-MA','ar-DZ','ar-TN','ar-LY']};let rec=null;
+$('mic').onclick=()=>{
+ if(!SR){wv(1,T[L].nosr);setTimeout(()=>wv(0),3000);return}
+ if(rec){rec.stop();return}
+ const v=VL[$('sc').value];let er='';rec=new SR();rec.lang=Array.isArray(v)?v[+$('ss').value]:v;rec.interimResults=true;
+ if(window.speechSynthesis)speechSynthesis.cancel();
+ rec.onstart=()=>{wv(1,T[L].lis);$('mic').classList.add('animate-pulse','!bg-red-600')};
+ rec.onresult=e=>{$('inp').value=[...e.results].map(r=>r[0].transcript).join('')};
+ rec.onerror=e=>{er=e.error};
+ rec.onend=()=>{rec=null;$('mic').classList.remove('animate-pulse','!bg-red-600');if(er&&er!=='no-speech'&&er!=='aborted'||er==='no-speech'){wv(1,T[L].mice);setTimeout(()=>wv(0),3000)}else wv(0)};
+ rec.start()};
+
+/* ===== DICTIONARY ===== */
+function dict(){const q=norm($('q').value);
+ $('dl').innerHTML=D.filter(d=>!q||norm([d.w,d.en,d.ar,REG[d.r].n.join(' ')].join(' ')).includes(q)).map(d=>`<div class="card"><div class="flex justify-between items-center"><b class="text-2xl" dir="rtl">${d.w}</b><span class="text-xs px-2 py-1 rounded-full bg-teal-100 text-teal-900 dark:bg-teal-900 dark:text-teal-100">📍 ${REG[d.r].n[+(L==='ar')]}</span></div><p class="text-sm mt-1">${d[L]}</p><p class="text-sm mt-2 opacity-70" dir="auto">${d.x}</p></div>`).join('')||`<p class="text-sm">${T[L].none}</p>`}
+
+/* ===== UPGRADE MODAL ===== */
+function mod(f){const m=$('md');if(f!==undefined){m.classList.toggle('hidden',!f);m.classList.toggle('flex',!!f)}
+ const p=CFG.plans[plan],a=CFG.pay[pay],amt={binance:p.usdt+' USDT',bankak:p.sdg+' SDG'}[pay]||p.egp+' EGP',ar=+(L==='ar');
+ $('pl').innerHTML=CFG.plans.map((x,i)=>`<button data-i="${i}" class="flex-1 rounded-xl p-2 text-sm font-semibold ${i===plan?'bg-teal-600 text-white':'bg-slate-200 dark:bg-slate-700'}">${x.n[ar]}<br><small>${x.egp} EGP · ${x.usdt} USDT</small></button>`).join('');
+ $('pm').innerHTML=Object.keys(CFG.pay).map(k=>`<button data-k="${k}" class="chip ${k===pay?'bg-teal-600 text-white':'bg-slate-200 dark:bg-slate-700'}">${CFG.pay[k].n}</button>`).join('');
+ $('pi').innerHTML=`<p>${T[L].how}</p><p><b>${amt}</b> → <b dir="ltr" class="select-all">${a.a}</b></p><a href="${CFG.wa}" target="_blank" rel="noopener" class="inline-block text-teal-700 dark:text-teal-300 underline font-semibold">${T[L].wa}</a>`}
+$('pl').onclick=e=>{const b=e.target.closest('button');if(b){plan=+b.dataset.i;mod()}};
+$('pm').onclick=e=>{const b=e.target.closest('button');if(b){pay=b.dataset.k;mod()}};
+$('up').onclick=()=>mod(1);$('cl').onclick=()=>mod(0);
+$('rd').onclick=()=>{const d=CFG.codes[$('cd').value.trim().toUpperCase()],m=$('ms');
+ if(d){S('zp',Date.now()+d*864e5);m.textContent=T[L].ok;m.className='text-sm text-green-600';ref()}else{m.textContent=T[L].bad;m.className='text-sm text-red-600'}};
+
+/* ===== WIRING ===== */
+function lang(l){L=l;S('zl',l);const d=document.documentElement;d.lang=l;d.dir=l==='ar'?'rtl':'ltr';$('lg').textContent=l==='ar'?'English':'العربية';
+ document.querySelectorAll('[data-i18n]').forEach(e=>e.textContent=T[l][e.dataset.i18n]);
+ document.querySelectorAll('[data-ph]').forEach(e=>e.placeholder=T[l][e.dataset.ph]);
+ fill();smp();dict();show();ref();mod()}
+$('lg').onclick=()=>lang(L==='ar'?'en':'ar');
+$('th').onclick=()=>S('zt',document.documentElement.classList.toggle('dark')?'d':'l');
+$('sc').onchange=()=>{sub('sc','ss');smp()};$('tc').onchange=()=>sub('tc','ts');
+$('sw').onclick=()=>{const a=$('sc').value,b=$('tc').value,x=$('ss').value,y=$('ts').value;$('sc').value=b;$('tc').value=a;sub('sc','ss');sub('tc','ts');$('ss').value=y;$('ts').value=x;smp()};
+$('smp').onclick=e=>{if(e.target.dataset.v)$('inp').value=e.target.dataset.v};
+$('q').oninput=dict;
+document.querySelectorAll('[data-tone]').forEach(b=>b.onclick=()=>{tone=b.dataset.tone;document.querySelectorAll('[data-tone]').forEach(x=>on(x,x===b));show()});
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>on(x,x===b));$('pt').hidden=b.dataset.tab!=='pt';$('pd').hidden=b.dataset.tab!=='pd'});
+$('go').onclick=async()=>{const t=$('inp').value.trim();if(!t)return;if(!can())return mod(1);
+ const b=$('go'),tgt=$('tc').value,src=$('sc').value,ts=$('ts').value,[sn,ss]=lbl('sc','ss'),[tn,tsn]=lbl('tc','ts');
+ b.disabled=true;b.textContent=T[L].wait;let p;
+ try{p=fromAI(await ai({text:t,src:sn,srcSub:ss,tgt:tn,tgtSub:tsn,tone}),tgt)}catch(e){p=find(t)}
+ b.disabled=false;b.textContent=T[L].go;
+ last={p,tgt,src,ts};if(!prem())S('zu',JSON.stringify({d:day(),n:cnt()+1}));ref();show()};
+
+if(G('zt')?G('zt')==='d':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+on(document.querySelector('[data-tone=street]'),1);on(document.querySelector('[data-tone=biz]'),0);
+document.querySelectorAll('[data-tab]').forEach(x=>on(x,x.dataset.tab==='pt'));
+lang(L);
+if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js'));
+</script>
+</body>
+</html>
